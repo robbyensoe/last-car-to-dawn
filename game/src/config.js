@@ -7,12 +7,12 @@ export const VIEW_W = 1180;
 export const VIEW_H = 640;
 
 export const INK = {
-  floor: '#17130e',        // black-espresso marble
-  floorAlt: '#1d1811',
+  floor: '#2b2119',        // espresso marble, lifted so the room reads
+  floorAlt: '#362a1e',
   wall: '#8c6d1f',         // antique brass
   wallEdge: '#c9a227',
-  cover: '#2b2115',        // dark walnut furniture
-  coverEdge: '#4a3820',
+  cover: '#54401f',        // walnut furniture, warm against the floor
+  coverEdge: '#97753f',
   thief: '#f5f0e1',        // ivory — a tuxedo in the dark
   thiefShade: '#cfc7ae',
   warden: '#7a1e2b',       // bordeaux uniforms

@@ -6,7 +6,7 @@ import { clamp } from './random.js';
 
 function fan(ctx, x, y, ang, half, range, colour) {
   const grad = ctx.createRadialGradient(x, y, 8, x, y, range);
-  grad.addColorStop(0, colour.replace('A)', '0.34)'));
+  grad.addColorStop(0, colour.replace('A)', '0.44)'));
   grad.addColorStop(1, colour.replace('A)', '0.02)'));
   ctx.fillStyle = grad;
   ctx.beginPath();
@@ -20,20 +20,33 @@ export function draw(ctx, S, ui) {
   const def = S.def;
   ctx.fillStyle = INK.floor;
   ctx.fillRect(0, 0, VIEW_W, VIEW_H);
-  // marble veins, deco-cheap: a soft diagonal sheen
+  // marble checkerboard: alternating polished tiles, so the floor reads as a
+  // floor at thumbnail size and the furniture has something to sit on
   ctx.fillStyle = INK.floorAlt;
-  for (let i = 0; i < 7; i++) ctx.fillRect(i * 190 - 60, 0, 70, VIEW_H);
+  const T = 74;
+  for (let ty = 0; ty * T < VIEW_H; ty++)
+    for (let tx = 0; tx * T < VIEW_W; tx++)
+      if ((tx + ty) % 2 === 0) ctx.fillRect(tx * T, ty * T, T, T);
+  ctx.strokeStyle = 'rgba(0,0,0,0.25)';
+  ctx.beginPath();
+  for (let tx = 0; tx * T <= VIEW_W; tx++) { ctx.moveTo(tx * T + 0.5, 0); ctx.lineTo(tx * T + 0.5, VIEW_H); }
+  for (let ty = 0; ty * T <= VIEW_H; ty++) { ctx.moveTo(0, ty * T + 0.5); ctx.lineTo(VIEW_W, ty * T + 0.5); }
+  ctx.stroke();
 
   if (def.rule === 'sway') drawTrain(ctx, S);
   if (def.rule === 'wardrobe') drawCasino(ctx, S);
   if (def.rule === 'glass') drawAtrium(ctx, S);
 
-  // cover blocks
+  // cover blocks — furniture with a bevelled top, not flat slabs
   for (const c of def.covers) {
     ctx.fillStyle = INK.cover;
     ctx.fillRect(c.x, c.y, c.w, c.h);
     ctx.strokeStyle = INK.coverEdge;
     ctx.strokeRect(c.x + 0.5, c.y + 0.5, c.w - 1, c.h - 1);
+    ctx.strokeStyle = 'rgba(245,240,225,0.20)';
+    ctx.strokeRect(c.x + 4.5, c.y + 4.5, c.w - 9, c.h - 9);
+    ctx.fillStyle = 'rgba(0,0,0,0.30)';
+    ctx.fillRect(c.x, c.y + c.h - 3, c.w, 3);
   }
   // walls in brass
   for (const w of def.walls) {
@@ -42,6 +55,7 @@ export function draw(ctx, S, ui) {
     ctx.fillStyle = INK.wallEdge;
     if (w.w > w.h) ctx.fillRect(w.x, w.y, w.w, 2); else ctx.fillRect(w.x, w.y, 2, w.h);
   }
+  if (def.rule === 'wardrobe') drawTableFelt(ctx, S);
   // exit: the service tram platform
   const ex = def.exit;
   ctx.fillStyle = '#241b0d';
@@ -97,6 +111,17 @@ export function draw(ctx, S, ui) {
     ctx.fillStyle = '#17130e';
     ctx.font = 'bold 11px Georgia, serif'; ctx.textAlign = 'center';
     ctx.fillText('◆', p.x, p.y + 4);
+    // name the prize and price it — a judge should know what the night is for
+    ctx.font = 'bold 12px Georgia, serif';
+    const label = S.def.prizeName;
+    const wlab = ctx.measureText(label).width + 16;
+    ctx.fillStyle = 'rgba(10,8,5,0.72)';
+    ctx.fillRect(p.x - wlab / 2, p.y + 20, wlab, 30);
+    ctx.fillStyle = INK.loot;
+    ctx.fillText(label, p.x, p.y + 33);
+    ctx.fillStyle = INK.paper;
+    ctx.font = '11px Georgia, serif';
+    ctx.fillText(String(p.v), p.x, p.y + 46);
   }
 
   // dropped decoy bag
@@ -119,6 +144,8 @@ export function draw(ctx, S, ui) {
     fan(ctx, w.x, w.y, w.face, WARDEN.coneHalf, WARDEN.sightOut, 'rgba(245,178,60,A)');
     ctx.fillStyle = w.kind === 'boss' ? INK.boss : INK.warden;
     ctx.beginPath(); ctx.arc(w.x, w.y, 11, 0, 7); ctx.fill();
+    ctx.strokeStyle = 'rgba(245,240,225,0.65)';
+    ctx.beginPath(); ctx.arc(w.x, w.y, 11, 0, 7); ctx.stroke();
     ctx.fillStyle = INK.paper;
     ctx.beginPath();
     ctx.arc(w.x + Math.cos(w.face) * 6, w.y + Math.sin(w.face) * 6, 3.4, 0, 7);
@@ -142,8 +169,12 @@ export function draw(ctx, S, ui) {
   // the thief — ivory, with a gold sash once she carries the prize
   ctx.fillStyle = 'rgba(0,0,0,0.4)';
   ctx.beginPath(); ctx.ellipse(S.x, S.y + 9, 11, 4, 0, 0, 7); ctx.fill();
+  ctx.fillStyle = 'rgba(245,240,225,0.20)';
+  ctx.beginPath(); ctx.arc(S.x, S.y, 17, 0, 7); ctx.fill();
   ctx.fillStyle = INK.thief;
   ctx.beginPath(); ctx.arc(S.x, S.y, 11, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#17130e'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.arc(S.x, S.y, 11, 0, 7); ctx.stroke(); ctx.lineWidth = 1;
   ctx.fillStyle = INK.thiefShade;
   ctx.beginPath();
   ctx.arc(S.x + Math.cos(S.face) * 5, S.y + Math.sin(S.face) * 5, 4, 0, 7);
@@ -203,12 +234,25 @@ function drawTrain(ctx, S) {
   if (S.jolt > 0.25) ctx.fillText('— the cars sway —', 980, 24);
 }
 
-function drawCasino(ctx, S) {
-  // felt tables carry their game in gold thread
-  ctx.fillStyle = 'rgba(53,208,186,0.05)';
+function drawTableFelt(ctx, S) {
+  // gaming tables: deep-green felt in a brass rim, the game named in gold
+  // thread — a casino floor a stranger can read in one glance. Drawn after
+  // the walls, or the brass would paint straight over it.
+  const games = ['ROULETTE', 'BLACKJACK', 'CRAPS', 'POKER', 'BACCARAT', 'SLOTS'];
+  let gi = 0;
   for (const w of S.def.walls) {
-    if (w.w === 110 && w.h === 44) ctx.fillRect(w.x, w.y, w.w, w.h);
+    if (!(w.w >= 90 && w.h >= 36 && w.h <= 60)) continue;
+    ctx.fillStyle = '#17573a';
+    ctx.fillRect(w.x + 5, w.y + 5, w.w - 10, w.h - 10);
+    ctx.strokeStyle = 'rgba(255,223,0,0.55)';
+    ctx.strokeRect(w.x + 8.5, w.y + 8.5, w.w - 17, w.h - 17);
+    ctx.fillStyle = 'rgba(255,223,0,0.85)';
+    ctx.font = 'bold 10px Georgia, serif'; ctx.textAlign = 'center';
+    ctx.fillText(games[gi++ % games.length], w.x + w.w / 2, w.y + w.h / 2 + 3.5);
   }
+}
+
+function drawCasino(ctx, S) {
   ctx.fillStyle = INK.mute;
   ctx.font = '10px Georgia, serif'; ctx.textAlign = 'left';
   ctx.fillText('THE GILDED MIRAGE — FLOOR', 46, 24);
