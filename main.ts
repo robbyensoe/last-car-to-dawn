@@ -52,7 +52,9 @@ if (failures.length > 0) {
 console.log(`preflight ok: ${required.length} files verified, all systems present`);
 
 // --- assemble ---------------------------------------------------------------
-const out = join(root, "output");
+// The grader mounts this repository read-only and hands us a writable
+// /output (MAKEFUN_OUTPUT_DIR); never write beside the sources.
+const out = process.env.MAKEFUN_OUTPUT_DIR ?? "/output";
 mkdirSync(out, { recursive: true });
 cpSync(gameDir, join(out, "game"), { recursive: true });
 cpSync(shotsDir, join(out, "screenshots"), { recursive: true });
@@ -66,4 +68,4 @@ writeFileSync(
     game_path_max_bytes: 1000,
   }),
 );
-console.log("dossier assembled at output/ — the tram leaves at dawn.");
+console.log("dossier assembled — the tram leaves at dawn.");
