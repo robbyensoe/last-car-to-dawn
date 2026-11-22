@@ -13,12 +13,12 @@ export function stagedState(ui, _makeDefault) {
     // meters alive and the record already remembering her.
     const S = new Heist(1, 12, null);
     S.x = 520; S.y = 275; S.face = 0.4; S.sneak = true;
-    S.wardens[0].x = 640; S.wardens[0].y = 196; S.wardens[0].face = 2.35; S.wardens[0].meter = 52;
+    S.wardens[0].x = 640; S.wardens[0].y = 196; S.wardens[0].face = 2.35; S.wardens[0].meter = 66;
     S.wardens[1].x = 210; S.wardens[1].y = 128; S.wardens[1].face = 0.2;
     S.wardens[2].x = 962; S.wardens[2].y = 430; S.wardens[2].face = -2.2; S.wardens[2].meter = 18;
     S.eyes[0].ang = 1.15;
     S.eyes[1].ang = Math.PI;
-    S.alarm = 27; S.evidence = 34;
+    S.alarm = 41; S.evidence = 47;
     S.noticedFlags.n25 = true;
     S.stats.lootValue = 800;
     S.bags = [S.loots[0]];
