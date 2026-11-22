@@ -1,8 +1,8 @@
 # Last Car to Dawn
 
-![Competition](https://make.fun/badge/best-heist-game-20261122-0559.svg)
-![Rank](https://make.fun/badge/best-heist-game-20261122-0559/robbyensoe/last-car-to-dawn/rank.svg)
-![Reward](https://make.fun/badge/best-heist-game-20261122-0559/robbyensoe/last-car-to-dawn/reward.svg)
+[![make.fun · best-heist-game-20261122-0559](https://make.fun/badge/best-heist-game-20261122-0559.svg)](https://make.fun/bounty/best-heist-game-20261122-0559?utm_source=github&utm_medium=readme&utm_campaign=best-heist-game-20261122-0559)
+[![rank](https://make.fun/badge/best-heist-game-20261122-0559/robbyensoe/last-car-to-dawn/rank.svg)](https://make.fun/bounty/best-heist-game-20261122-0559/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=best-heist-game-20261122-0559)
+[![reward](https://make.fun/badge/best-heist-game-20261122-0559/robbyensoe/last-car-to-dawn/reward.svg)](https://make.fun/bounty/best-heist-game-20261122-0559?utm_source=github&utm_medium=readme&utm_campaign=best-heist-game-20261122-0559)
 
 A top-down heist in three scores, played in one night by a woman taking her
 name back.
